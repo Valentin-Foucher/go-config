@@ -20,19 +20,20 @@ func main() {
 ## API Reference
 
 These are the available functions to retrieve a key. They will return an error if type is incorrect or if the key is missing.
-- `MustGetString`
-- `MustGetInt`
-- `MustGetFloat`
-- `MustGetBool`
-- `MustGetMap`
-- `MustGetSlice`
+- `(Config).MustGetString`
+- `(Config).MustGetInt`
+- `(Config).MustGetFloat`
+- `(Config).MustGetBool`
+- `(Config).MustGetMap`
+- `(Config).MustGetSlice`
+- `MustGetType` (generic type)
 
 These are the available functions to retrieve a key or fallback to the default value if an error occurred.
-- `GetStringOrDefault`
-- `GetIntOrDefault`
-- `GetFloatOrDefault`
-- `GetBoolOrDefault`
-- `GetMapOrDefault`
-- `GetSliceOrDefault`
+- `(Config).GetStringOrDefault`
+- `(Config).GetIntOrDefault`
+- `(Config).GetFloatOrDefault`
+- `(Config).GetBoolOrDefault`
+- `(Config).GetMapOrDefault`
+- `(Config).GetSliceOrDefault`
 
-`ListKeys` allows to retrieve the keys of a map anywhere in the configuration.
+`(Config).ListKeys` allows to retrieve the keys of a map anywhere in the configuration.

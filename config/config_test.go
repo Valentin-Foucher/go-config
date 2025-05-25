@@ -189,3 +189,15 @@ func TestListKeys(t *testing.T) {
 	_, err = c.ListKeys("doesnotexist")
 	assert.EqualError(t, err, "key \"doesnotexist\" not found")
 }
+
+func TestMustGetType(t *testing.T) {
+	c := getTestConfig()
+
+	type a struct {
+		Leaf string
+	}
+
+	value, err := MustGetType[a](c, "test-map.ultra-nested.0")
+	assert.Equal(t, "leaf", value.Leaf)
+	assert.Nil(t, err)
+}

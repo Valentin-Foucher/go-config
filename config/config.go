@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 type Config map[any]any
@@ -64,6 +66,18 @@ func (c Config) GetMapOrDefault(key string, defaultValue map[any]any) map[any]an
 
 func (c Config) GetSliceOrDefault(key string, defaultValue []any) []any {
 	return getOrDefault(c, key, defaultValue)
+}
+
+func MustGetType[T any](c Config, key string) (T, error) {
+	var result T
+
+	value, err := c.MustGetMap(key)
+	if err != nil {
+		return result, err
+	}
+
+	err = mapstructure.Decode(value, &result)
+	return result, err
 }
 
 func (c Config) ListKeys(key string) ([]any, error) {
