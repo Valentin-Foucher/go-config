@@ -20,7 +20,7 @@ func main() {
 ## API Reference
 
 These are the available functions to retrieve a key. They will return an error if type is incorrect or if the key is missing.
-- `(Config).MustGetString`
+- `(Config).MustGetString` (prefix value with ---ENV to load the env variable)
 - `(Config).MustGetInt`
 - `(Config).MustGetFloat`
 - `(Config).MustGetBool`

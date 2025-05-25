@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,6 +26,7 @@ func getTestConfig() Config {
 		"float":      5.123456,
 		"string":     "test",
 		"bool":       false,
+		"env":        "---ENV TEST",
 	}
 }
 
@@ -199,5 +201,16 @@ func TestMustGetType(t *testing.T) {
 
 	value, err := MustGetType[a](c, "test-map.ultra-nested.0")
 	assert.Equal(t, "leaf", value.Leaf)
+	assert.Nil(t, err)
+}
+
+func TestEnvVariable(t *testing.T) {
+	c := getTestConfig()
+
+	err := os.Setenv("TEST", "test123456")
+	assert.Nil(t, err)
+
+	value, err := c.MustGetString("env")
+	assert.Equal(t, "test123456", value)
 	assert.Nil(t, err)
 }

@@ -21,7 +21,16 @@ func (c Config) String() string {
 }
 
 func (c Config) MustGetString(key string) (string, error) {
-	return getForType[string](c, key)
+	value, err := getForType[string](c, key)
+	if err != nil {
+		return "", err
+	}
+
+	if isEnvVariableReference(value) {
+		value = loadEnvVariable(value)
+	}
+
+	return value, nil
 }
 
 func (c Config) MustGetInt(key string) (int, error) {
