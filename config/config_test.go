@@ -42,6 +42,14 @@ func TestEmptyConfig(t *testing.T) {
 	assert.EqualError(t, err, "expected slice got: map[interface {}]interface {}: map[]")
 }
 
+func TestMissingKey(t *testing.T) {
+	c := getTestConfig()
+
+	value, err := c.MustGetInt("doesnotexist")
+	assert.Equal(t, 0, value)
+	assert.EqualError(t, err, "key \"doesnotexist\" not found")
+
+}
 func TestInt(t *testing.T) {
 	c := getTestConfig()
 
