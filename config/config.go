@@ -9,60 +9,86 @@ import (
 
 type Config map[any]any
 
-func (c Config) GetString(key string) (string, error) {
-	v, err := c.get(key)
+func (c Config) String() string {
+	b, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
-		return "", err
+		return "{}"
 	}
 
-	s, ok := v.(string)
-	if !ok {
-		return "", fmt.Errorf("expected a string, got %[1]T: %[1]T", v)
-	}
-
-	return s, nil
+	return string(b)
 }
 
-func (c Config) GetInt(key string) (int, error) {
-	v, err := c.get(key)
-	if err != nil {
-		return 0, err
-	}
-
-	i, ok := v.(int)
-	if !ok {
-		return 0, fmt.Errorf("expected an int, got %[1]T: %[1]T", v)
-	}
-
-	return i, nil
+func (c Config) MustGetString(key string) (string, error) {
+	return getForType[string](c, key)
 }
 
-func (c Config) GetFloat(key string) (float64, error) {
-	v, err := c.get(key)
-	if err != nil {
-		return 0, err
-	}
-
-	f, ok := v.(float64)
-	if !ok {
-		return 0, fmt.Errorf("expected a float, got %[1]T: %[1]T", v)
-	}
-
-	return f, nil
+func (c Config) MustGetInt(key string) (int, error) {
+	return getForType[int](c, key)
 }
 
-func (c Config) GetBool(key string) (bool, error) {
+func (c Config) MustGetFloat(key string) (float64, error) {
+	return getForType[float64](c, key)
+}
+
+func (c Config) MustGetBool(key string) (bool, error) {
+	return getForType[bool](c, key)
+}
+
+func (c Config) MustGetMap(key string) (map[any]any, error) {
+	return getForType[map[any]any](c, key)
+}
+
+func (c Config) MustGetSlice(key string) ([]any, error) {
+	return getForType[[]any](c, key)
+}
+
+func (c Config) GetStringOrDefault(key string, defaultValue string) string {
+	return getOrDefault(c, key, defaultValue)
+}
+
+func (c Config) GetIntOrDefault(key string, defaultValue int) int {
+	return getOrDefault(c, key, defaultValue)
+}
+
+func (c Config) GetFloatOrDefault(key string, defaultValue float64) float64 {
+	return getOrDefault(c, key, defaultValue)
+}
+
+func (c Config) GetBoolOrDefault(key string, defaultValue bool) bool {
+	return getOrDefault(c, key, defaultValue)
+}
+
+func (c Config) GetMapOrDefault(key string, defaultValue map[any]any) map[any]any {
+	return getOrDefault(c, key, defaultValue)
+}
+
+func (c Config) GetSliceOrDefault(key string, defaultValue []any) []any {
+	return getOrDefault(c, key, defaultValue)
+}
+
+func getForType[T any](c Config, key string) (T, error) {
+	var dummy T
+
 	v, err := c.get(key)
 	if err != nil {
-		return false, err
+		return dummy, err
 	}
 
-	b, ok := v.(bool)
+	b, ok := v.(T)
 	if !ok {
-		return false, fmt.Errorf("expected a bool, got %[1]T: %[1]T", v)
+		return dummy, fmt.Errorf("expected a %[1]T, got %[2]T: %[2]T", dummy, v)
 	}
 
 	return b, nil
+}
+
+func getOrDefault[T any](c Config, key string, defaultValue T) T {
+	value, err := getForType[T](c, key)
+	if err != nil {
+		return defaultValue
+	}
+
+	return value
 }
 
 func (c Config) get(key string) (any, error) {
@@ -76,7 +102,7 @@ func (c Config) get(key string) (any, error) {
 }
 
 func (c Config) getValue(path []string, node any) (any, error) {
-	next, err := c.getNext(path, node)
+	next, err := c.getChildElement(path, node)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +114,7 @@ func (c Config) getValue(path []string, node any) (any, error) {
 	return c.getValue(path[1:], next)
 }
 
-func (c Config) getNext(path []string, node any) (any, error) {
+func (c Config) getChildElement(path []string, node any) (any, error) {
 	key := path[0]
 	index, err := asInteger(key)
 	if err == nil {
@@ -123,13 +149,4 @@ func (c Config) getMapElement(key string, node any) (any, error) {
 	}
 
 	return value, nil
-}
-
-func (c Config) String() string {
-	b, err := json.MarshalIndent(c, "", "  ")
-	if err != nil {
-		return "{}"
-	}
-
-	return string(b)
 }
