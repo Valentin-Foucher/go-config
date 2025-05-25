@@ -172,3 +172,20 @@ func TestNested(t *testing.T) {
 	assert.Equal(t, "leaf", value)
 	assert.Nil(t, err)
 }
+
+func TestListKeys(t *testing.T) {
+	c := getTestConfig()
+
+	keys, err := c.ListKeys("test-map")
+	assert.Contains(t, keys, "string", "test-nested-map")
+	assert.Contains(t, keys, "test-nested-map")
+	assert.Contains(t, keys, "test-nested-slice")
+	assert.Contains(t, keys, "ultra-nested")
+	assert.Nil(t, err)
+
+	_, err = c.ListKeys("test-slice")
+	assert.EqualError(t, err, "expected a map[interface {}]interface {}, got []interface {}: []interface {}")
+
+	_, err = c.ListKeys("doesnotexist")
+	assert.EqualError(t, err, "key \"doesnotexist\" not found")
+}

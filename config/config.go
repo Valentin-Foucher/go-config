@@ -66,6 +66,20 @@ func (c Config) GetSliceOrDefault(key string, defaultValue []any) []any {
 	return getOrDefault(c, key, defaultValue)
 }
 
+func (c Config) ListKeys(key string) ([]any, error) {
+	value, err := c.MustGetMap(key)
+	if err != nil {
+		return nil, err
+	}
+
+	var keys []any
+	for k := range value {
+		keys = append(keys, k)
+	}
+
+	return keys, nil
+}
+
 func getForType[T any](c Config, key string) (T, error) {
 	var dummy T
 

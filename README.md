@@ -34,3 +34,5 @@ These are the available functions to retrieve a key or fallback to the default v
 - `GetBoolOrDefault`
 - `GetMapOrDefault`
 - `GetSliceOrDefault`
+
+`ListKeys` allows to retrieve the keys of a map anywhere in the configuration.
