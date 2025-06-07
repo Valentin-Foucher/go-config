@@ -10,11 +10,33 @@ Examples of code:
 
 ```go
 func main() {
-    cfg := config.Load("/some/config/file.json", config.JSON)
+    cfg, err := config.LoadType("/some/config/file.json", config.JSON)
+    if err != nil {
+        fatal(err)
+    }
+
     cfg.GetStringOrDefault("environment", "dev")
     cfg.MustGetBool("google.analytics.enabled")
     cfg.MustGetString("scraper.algo.0.name")
 }
+```
+
+A universal loading function can also be used:
+```go
+    cfg, err := config.Load("/some/config/file.json")
+    if err != nil {
+        fatal(err)
+    }
+
+    cfg, err = config.Load("/some/config/file.yaml")
+    if err != nil {
+        fatal(err)
+    }
+
+    cfg, err = config.Load("/some/config/file.toml")
+    if err != nil {
+        fatal(err)
+    }
 ```
 
 ## API Reference
